@@ -22,12 +22,21 @@ public class ConnectionWatcher implements Watcher
         connectedSignal.await();
     }
 
+    public void reConnect()
+    {
+        System.out.println("Zookeeper state is " + zooKeeper.getState());
+    }
+
     @Override
     public void process(final WatchedEvent event)
     {
         if(event.getState().equals(Event.KeeperState.SyncConnected))
         {
             connectedSignal.countDown();
+        }
+        else if(event.getState().equals(Event.KeeperState.Expired))
+        {
+            reConnect();
         }
         else
         {
